@@ -1,5 +1,6 @@
 package io.github.darkkronicle.kronhud;
 
+import com.google.gson.Gson;
 import io.github.darkkronicle.darkkore.config.ConfigurationManager;
 import io.github.darkkronicle.darkkore.intialization.InitializationHandler;
 import io.github.darkkronicle.kronhud.config.ConfigHandler;
@@ -15,6 +16,7 @@ import io.github.darkkronicle.kronhud.gui.hud.vanilla.ActionBarHud;
 import io.github.darkkronicle.kronhud.gui.hud.vanilla.BossBarHud;
 import io.github.darkkronicle.kronhud.gui.hud.vanilla.CrosshairHud;
 import io.github.darkkronicle.kronhud.gui.hud.vanilla.ScoreboardHud;
+import io.github.darkkronicle.kronhud.socket.SocketManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,13 +25,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 @Environment(EnvType.CLIENT)
 public class KronHUD implements ClientModInitializer {
 
-    public static final String MOD_ID = "kronhud";
+    public static final String MOD_ID = "garthud";
+    public static final Gson GSON = new Gson();
 
     @Override
     public void onInitializeClient() {
         initHuds();
         InitializationHandler.getInstance().registerInitializer(MOD_ID, 0, new InitHandler());
         ConfigurationManager.getInstance().add(ConfigHandler.getInstance());
+        SocketManager.init();
     }
 
     public void initHuds() {
@@ -56,6 +60,8 @@ public class KronHUD implements ClientModInitializer {
         hudManager.add(new CompassHud());
         hudManager.add(new TPSHud());
         hudManager.add(new ComboHud());
+        hudManager.add(new TownHud());
+        hudManager.add(new NearbyPlayerHud());
         HudRenderCallback.EVENT.register(hudManager::render);
         hudManager.getEntries().forEach(HudEntry::init);
     }
